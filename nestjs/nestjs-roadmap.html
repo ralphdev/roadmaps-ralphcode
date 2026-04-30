@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestJS Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #e8392a;
+    --accent2: #ff6b35;
+    --text: #e8e8f0;
+    --muted: #5a5a72;
+    --done: #22c55e;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  header {
+    padding: 48px 32px 32px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    max-width: 300px;
+  }
+
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px 0;
+  }
+
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(232,57,42,0.1);
+    border: 1px solid rgba(232,57,42,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .section-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+
+  .item:hover {
+    border-color: var(--muted);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .item.done {
+    border-color: rgba(34,197,94,0.3);
+    background: rgba(34,197,94,0.04);
+  }
+
+  .item.done .item-label {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(34,197,94,0.4);
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--muted);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+
+  .item.done .checkbox {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  .check-icon {
+    display: none;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .item.done .check-icon {
+    display: block;
+  }
+
+  .item-label {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    transition: color 0.2s;
+  }
+
+  .item-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  .subsection-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 16px 0 8px 2px;
+  }
+
+  .reset-btn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--muted);
+    color: var(--text);
+  }
+
+  @media (max-width: 600px) {
+    header { flex-wrap: wrap; padding: 24px 16px 20px; }
+    .progress-bar-wrap { max-width: 100%; width: 100%; order: 3; }
+    main { padding: 28px 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">N</div>
+    <h1><span>Nest</span>JS Roadmap</h1>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Progreso</span>
+      <span id="pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="fill" style="width:0%"></div>
+    </div>
+  </div>
+</header>
+
+<main id="roadmap"></main>
+
+<button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
+
+<script>
+const roadmap = [
+  {
+    title: "Bases necesarias antes de NestJS",
+    items: [
+      { label: "Node.js (módulos, async/await, streams)" },
+      { label: "TypeScript (tipos, clases, decoradores, genéricos)" },
+      { label: "HTTP y REST (verbos, status codes, headers)" },
+      { label: "NPM / módulos ES" },
+      { label: "Express básico (opcional pero útil)" },
+    ]
+  },
+  {
+    title: "Primeros pasos con NestJS",
+    items: [
+      { label: "Instalar CLI: npm i -g @nestjs/cli" },
+      { label: "Crear proyecto: nest new proyecto" },
+      { label: "Estructura de carpetas del proyecto" },
+      { label: "Módulos, Controladores y Providers" },
+      { label: "Decoradores principales (@Module, @Controller, @Injectable)" },
+      { label: "Inyección de dependencias (DI)" },
+      { label: "Ciclo de vida de una request" },
+    ]
+  },
+  {
+    title: "HTTP y enrutamiento",
+    items: [
+      { label: "@Get, @Post, @Put, @Patch, @Delete" },
+      { label: "@Param, @Query, @Body, @Headers" },
+      { label: "Respuestas con @Res y códigos de estado" },
+      { label: "Prefijos de ruta con @Controller('path')" },
+      { label: "Versioning de API" },
+    ]
+  },
+  {
+    title: "DTOs y validación",
+    items: [
+      { label: "Data Transfer Objects (DTO)" },
+      { label: "class-validator (decoradores de validación)" },
+      { label: "class-transformer (transformar payload)" },
+      { label: "ValidationPipe global" },
+      { label: "Pipes personalizados" },
+    ]
+  },
+  {
+    title: "Base de datos",
+    items: [
+      { sub: "TypeORM (opción recomendada para SQL)" },
+      { label: "Configurar @nestjs/typeorm" },
+      { label: "Entities y columnas" },
+      { label: "Repository pattern" },
+      { label: "Relaciones: OneToMany, ManyToOne, ManyToMany" },
+      { label: "Migraciones" },
+      { sub: "Mongoose (para MongoDB)" },
+      { label: "Configurar @nestjs/mongoose" },
+      { label: "Schemas con decoradores" },
+      { label: "Models e inyección" },
+      { sub: "Prisma (alternativa moderna)" },
+      { label: "Configurar Prisma con NestJS" },
+      { label: "PrismaService como provider" },
+    ]
+  },
+  {
+    title: "Autenticación y autorización",
+    items: [
+      { label: "Guards (@UseGuards)" },
+      { label: "JWT con @nestjs/jwt y passport" },
+      { label: "Estrategias Passport (local, jwt)" },
+      { label: "AuthGuard y JwtAuthGuard" },
+      { label: "Decorador @Roles y RolesGuard" },
+      { label: "Refresh tokens" },
+      { label: "OAuth2 / Social login (opcional)" },
+    ]
+  },
+  {
+    title: "Middleware, Interceptors y Filters",
+    items: [
+      { label: "Middleware (antes del controlador)" },
+      { label: "Interceptors (antes y después de handlers)" },
+      { label: "Exception Filters (@Catch)" },
+      { label: "HttpExceptionFilter global" },
+      { label: "Orden de ejecución del pipeline" },
+    ]
+  },
+  {
+    title: "Módulos avanzados",
+    items: [
+      { label: "Módulos dinámicos (forRoot, forFeature, register)" },
+      { label: "Módulos globales (@Global)" },
+      { label: "Módulos de configuración (@nestjs/config)" },
+      { label: "Variables de entorno con .env" },
+      { label: "ConfigService y validación de variables" },
+    ]
+  },
+  {
+    title: "Testing",
+    items: [
+      { label: "Unit tests con Jest" },
+      { label: "Testing module de NestJS" },
+      { label: "Mocks de services y repositories" },
+      { label: "E2E tests con Supertest" },
+      { label: "Coverage reports" },
+    ]
+  },
+  {
+    title: "TypeORM – Avanzado",
+    items: [
+      { label: "QueryBuilder" },
+      { label: "Transacciones" },
+      { label: "Subscribers y eventos de entidad" },
+      { label: "Índices y optimización" },
+    ]
+  },
+  {
+    title: "Recursos en NestJS",
+    items: [
+      { label: "nest generate resource (CRUD completo)" },
+      { label: "Estructura módulo por feature" },
+      { label: "Separar lógica en Services" },
+    ]
+  },
+  {
+    title: "GraphQL con NestJS",
+    items: [
+      { label: "Configurar @nestjs/graphql con Apollo" },
+      { label: "Code-first vs Schema-first" },
+      { label: "Resolvers, Queries, Mutations" },
+      { label: "Subscriptions" },
+      { label: "DataLoader para N+1" },
+    ]
+  },
+  {
+    title: "WebSockets",
+    items: [
+      { label: "@nestjs/websockets y Socket.io" },
+      { label: "Gateways (@WebSocketGateway)" },
+      { label: "@SubscribeMessage" },
+      { label: "Namespaces y rooms" },
+    ]
+  },
+  {
+    title: "Microservicios",
+    items: [
+      { label: "Patrón de microservicios en NestJS" },
+      { label: "Transporters: TCP, Redis, NATS, RabbitMQ, Kafka" },
+      { label: "@Client y ClientProxy" },
+      { label: "MessagePattern y EventPattern" },
+      { label: "Hybrid apps (HTTP + microservicio)" },
+    ]
+  },
+  {
+    title: "Colas y tareas asíncronas",
+    items: [
+      { label: "BullMQ con @nestjs/bull" },
+      { label: "Processors y jobs" },
+      { label: "Tareas programadas con @nestjs/schedule" },
+      { label: "@Cron, @Interval, @Timeout" },
+    ]
+  },
+  {
+    title: "Caché",
+    items: [
+      { label: "CacheModule (@nestjs/cache-manager)" },
+      { label: "Cache en memoria vs Redis" },
+      { label: "@UseInterceptors(CacheInterceptor)" },
+      { label: "Cache manual con CacheManager" },
+    ]
+  },
+  {
+    title: "Seguridad",
+    items: [
+      { label: "Helmet (headers HTTP seguros)" },
+      { label: "Rate limiting (@nestjs/throttler)" },
+      { label: "CORS" },
+      { label: "CSRF protection" },
+      { label: "Sanitización de inputs" },
+    ]
+  },
+  {
+    title: "Documentación – Swagger",
+    items: [
+      { label: "@nestjs/swagger setup" },
+      { label: "@ApiTags, @ApiOperation, @ApiResponse" },
+      { label: "@ApiProperty en DTOs" },
+      { label: "Bearer auth en Swagger" },
+    ]
+  },
+  {
+    title: "Deploy y producción",
+    items: [
+      { label: "Build: nest build" },
+      { label: "Docker y docker-compose" },
+      { label: "Variables de entorno por ambiente" },
+      { label: "PM2 o Node cluster" },
+      { label: "Deploy en Railway, Render, AWS, GCP" },
+      { label: "CI/CD con GitHub Actions" },
+    ]
+  },
+  {
+    title: "Buenas prácticas y arquitectura",
+    items: [
+      { label: "Clean Architecture en NestJS" },
+      { label: "CQRS con @nestjs/cqrs" },
+      { label: "Event Sourcing (opcional)" },
+      { label: "Hexagonal architecture" },
+      { label: "Logging estructurado (Winston, Pino)" },
+      { label: "OpenTelemetry / trazabilidad" },
+    ]
+  },
+];
+
+const STORAGE_KEY = 'nestjs-roadmap-v1';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+let state = loadState();
+let total = 0;
+
+function buildRoadmap() {
+  const container = document.getElementById('roadmap');
+  container.innerHTML = '';
+
+  roadmap.forEach((section, si) => {
+    const div = document.createElement('div');
+    div.className = 'section';
+
+    const realItems = section.items.filter(i => !i.sub);
+    const doneCount = realItems.filter(item => state[`${si}-${item.label}`]).length;
+    total = roadmap.reduce((acc, s) => acc + s.items.filter(i => !i.sub).length, 0);
+
+    div.innerHTML = `
+      <div class="section-header">
+        <span class="section-num">${String(si + 1).padStart(2, '0')}</span>
+        <span class="section-title">${section.title}</span>
+        <span class="section-count">${doneCount}/${realItems.length}</span>
+      </div>
+      <div class="items" id="section-${si}"></div>
+    `;
+
+    container.appendChild(div);
+
+    const itemsEl = div.querySelector(`#section-${si}`);
+    section.items.forEach((item, ii) => {
+      if (item.sub) {
+        const sub = document.createElement('div');
+        sub.className = 'subsection-label';
+        sub.textContent = item.sub;
+        itemsEl.appendChild(sub);
+        return;
+      }
+
+      const key = `${si}-${item.label}`;
+      const done = !!state[key];
+      const el = document.createElement('div');
+      el.className = 'item' + (done ? ' done' : '');
+      el.innerHTML = `
+        <div class="checkbox"><span class="check-icon">✓</span></div>
+        <span class="item-label">${item.label}</span>
+      `;
+      el.onclick = () => toggle(key, el, si);
+      itemsEl.appendChild(el);
+    });
+  });
+
+  updateProgress();
+}
+
+function toggle(key, el, si) {
+  state[key] = !state[key];
+  saveState(state);
+  el.classList.toggle('done', state[key]);
+  updateSectionCount(si);
+  updateProgress();
+}
+
+function updateSectionCount(si) {
+  const section = roadmap[si];
+  const realItems = section.items.filter(i => !i.sub);
+  const doneCount = realItems.filter(item => state[`${si}-${item.label}`]).length;
+  const countEl = document.querySelector(`#roadmap .section:nth-child(${si + 1}) .section-count`);
+  if (countEl) countEl.textContent = `${doneCount}/${realItems.length}`;
+}
+
+function updateProgress() {
+  const done = Object.values(state).filter(Boolean).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('pct').textContent = `${pct}%`;
+  document.getElementById('fill').style.width = pct + '%';
+}
+
+function resetAll() {
+  if (!confirm('¿Reiniciar todo el progreso?')) return;
+  state = {};
+  saveState(state);
+  buildRoadmap();
+}
+
+buildRoadmap();
+</script>
+</body>
+</html>
