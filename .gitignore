@@ -1,0 +1,4 @@
+.claude/
+.claude.local/
+*.claude.local
+CLAUDE.md
