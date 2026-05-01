@@ -1,3 +1,40 @@
+// Dark mode
+function initTheme() {
+  const isDark = localStorage.getItem('nestjs-dark-mode') === 'true';
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+    updateThemeIcon(true);
+  } else {
+    document.documentElement.classList.remove('dark');
+    updateThemeIcon(false);
+  }
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  if (isDark) {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('nestjs-dark-mode', 'false');
+    updateThemeIcon(false);
+  } else {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('nestjs-dark-mode', 'true');
+    updateThemeIcon(true);
+  }
+}
+
+function updateThemeIcon(isDark) {
+  const sunIcon = document.getElementById('sun-icon');
+  const moonIcon = document.getElementById('moon-icon');
+  if (isDark) {
+    sunIcon.classList.remove('hidden');
+    moonIcon.classList.add('hidden');
+  } else {
+    sunIcon.classList.add('hidden');
+    moonIcon.classList.remove('hidden');
+  }
+}
+
 const SECTIONS = [
   {
     title: "Node.js — El motor",
@@ -1180,9 +1217,17 @@ function buildNav() {
     const done = state[getSectionKey(i)]?.done;
     const active = i === currentSection;
     const el = document.createElement('div');
-    el.className = 'nav-item' + (active ? ' active' : '') + (done ? ' completed' : '');
-    el.innerHTML = `<span class="nav-num">${String(i+1).padStart(2,'0')}</span><div class="nav-dot"></div><span>${s.title}</span>`;
-    el.onclick = () => { currentSection = i; currentLesson = 0; render(); };
+    let classes = 'flex items-center gap-2.5 px-5 py-2 cursor-pointer border-l-4 transition-all duration-150 text-sm ';
+    if (active) {
+      classes += 'border-l-accent bg-red-50 dark:bg-gray-700 text-accent font-semibold';
+    } else {
+      classes += 'border-l-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200';
+    }
+    if (done) classes += ' text-done dark:text-green-400';
+
+    el.className = classes;
+    el.innerHTML = `<span class="font-mono text-xs opacity-60">${String(i+1).padStart(2,'0')}</span><div class="w-1.5 h-1.5 rounded-full ${done ? 'bg-done dark:bg-green-400' : active ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-600'} flex-shrink-0"></div><span>${s.title}</span>`;
+    el.onclick = () => { currentSection = i; currentLesson = 0; render(); closeSidebar(); };
     nav.appendChild(el);
   });
   const done = completedSections();
@@ -1194,12 +1239,12 @@ function buildNav() {
 function codeBlock(obj, id) {
   if (!obj) return '';
   return `
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">${obj.lang} — ${obj.label || ''}</span>
-        <button class="copy-btn" onclick="copyCode('code-${id}')">copiar</button>
+    <div class="bg-gray-900 dark:bg-black rounded-lg my-5 overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-700">
+        <span class="font-mono text-xs text-gray-400 uppercase tracking-wider">${obj.lang} — ${obj.label || ''}</span>
+        <button class="copy-btn font-mono text-xs text-gray-400 hover:text-white bg-transparent border-none cursor-pointer px-1.5 py-1 rounded transition-all hover:bg-gray-800" onclick="copyCode('code-${id}')">copiar</button>
       </div>
-      <pre id="code-${id}">${obj.content}</pre>
+      <pre id="code-${id}" class="px-5 py-5 overflow-x-auto font-mono text-sm leading-relaxed text-gray-100">${obj.content}</pre>
     </div>`;
 }
 
@@ -1225,51 +1270,54 @@ function render() {
     const q = l.quiz;
     const answered = state[`q-${currentSection}-${currentLesson}`];
     quizHtml = `
-      <div class="quiz-block">
-        <div class="quiz-title">✎ Comprueba tu entendimiento</div>
-        <div class="quiz-question">${q.q}</div>
-        <div class="quiz-options">
+      <div class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl p-6 my-8">
+        <div class="font-mono text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3.5">✎ Comprueba tu entendimiento</div>
+        <div class="text-base font-bold mb-4 text-gray-900 dark:text-white">${q.q}</div>
+        <div class="space-y-2">
           ${q.options.map((opt, oi) => {
-            let cls = '';
+            let cls = 'p-3 border-2 rounded-lg cursor-pointer text-sm font-mono transition-all ';
             if (answered !== undefined) {
-              if (oi === q.correct) cls = 'correct';
-              else if (oi === answered && oi !== q.correct) cls = 'wrong';
+              if (oi === q.correct) cls += 'border-done bg-green-50 dark:bg-green-900 dark:bg-opacity-20 text-done dark:text-green-400';
+              else if (oi === answered && oi !== q.correct) cls += 'border-accent bg-red-50 dark:bg-red-900 dark:bg-opacity-20 text-accent dark:text-red-400';
+              else cls += 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400';
+            } else {
+              cls += 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:border-gray-400 dark:hover:border-gray-500';
             }
-            return `<div class="quiz-option ${cls}" onclick="answerQuiz(${oi})">${opt}</div>`;
+            return `<div class="${cls}" onclick="answerQuiz(${oi})">${opt}</div>`;
           }).join('')}
         </div>
-        <div class="quiz-feedback ${answered !== undefined ? 'show ' + (answered === q.correct ? 'ok' : 'fail') : ''}">
+        <div class="${answered !== undefined ? 'block mt-4 p-3 rounded-lg ' + (answered === q.correct ? 'bg-green-50 dark:bg-green-900 dark:bg-opacity-20 text-done dark:text-green-400' : 'bg-red-50 dark:bg-red-900 dark:bg-opacity-20 text-accent dark:text-red-400') : 'hidden'} text-sm">
           ${answered !== undefined ? (answered === q.correct ? '✓ ' + q.feedback : '✗ Incorrecto. ' + q.feedback) : ''}
         </div>
       </div>`;
   }
 
   const completeBtn = isLastLesson ? `
-    <button class="complete-btn ${isDone ? 'done-state' : ''}" onclick="markDone()">
+    <button class="font-mono text-sm px-4 py-2 rounded-lg border-2 ${isDone ? 'bg-done text-white border-done' : 'border-done text-done bg-green-50 dark:bg-green-900 dark:bg-opacity-20 dark:text-green-400 hover:bg-done hover:text-white'} transition-all" onclick="markDone()">
       ${isDone ? '✓ Sección completada' : 'Marcar sección como completada'}
     </button>` : '';
 
   const content = document.getElementById('content');
   content.innerHTML = `
-    <div class="lesson-header">
-      <div class="lesson-tag">Sección ${currentSection + 1} de ${SECTIONS.length} · Lección ${currentLesson + 1} de ${s.lessons.length}</div>
-      <h1 class="lesson-title">${s.title}</h1>
-      <p class="lesson-desc">${s.desc}</p>
+    <div class="mb-10">
+      <div class="font-mono text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">Sección ${currentSection + 1} de ${SECTIONS.length} · Lección ${currentLesson + 1} de ${s.lessons.length}</div>
+      <h1 class="text-4xl md:text-5xl font-bold italic leading-tight mb-3 text-gray-900 dark:text-white">${s.title}</h1>
+      <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">${s.desc}</p>
     </div>
-    <div class="divider"></div>
-    <div class="lesson-body">
-      <h2>${l.heading}</h2>
+    <hr class="border-gray-300 dark:border-gray-700 my-8">
+    <div class="space-y-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-4">${l.heading}</h2>
       ${l.body || ''}
       ${l.code ? codeBlock(l.code, `${currentSection}-${currentLesson}-a`) : ''}
       ${l.code2 ? codeBlock(l.code2, `${currentSection}-${currentLesson}-b`) : ''}
       ${l.code3 ? codeBlock(l.code3, `${currentSection}-${currentLesson}-c`) : ''}
-      ${l.callout ? `<div class="callout"><div class="callout-title">${l.callout.title}</div><p>${l.callout.text}</p></div>` : ''}
+      ${l.callout ? `<div class="border-l-4 border-accent bg-red-50 dark:bg-red-900 dark:bg-opacity-20 p-4 rounded-r-lg my-6"><div class="font-mono text-xs text-accent dark:text-red-400 uppercase tracking-wider mb-2">${l.callout.title}</div><p class="text-gray-700 dark:text-gray-300 text-sm">${l.callout.text}</p></div>` : ''}
       ${quizHtml}
     </div>
-    <div class="bottom-nav">
-      <button class="btn btn-ghost" onclick="prevLesson()" ${currentSection === 0 && currentLesson === 0 ? 'disabled' : ''}>← Anterior</button>
+    <div class="flex justify-between items-center mt-16 pt-8 border-t border-gray-300 dark:border-gray-700 gap-4">
+      <button class="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-mono text-sm border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-900 dark:hover:text-gray-200 transition-all ${currentSection === 0 && currentLesson === 0 ? 'opacity-30 cursor-not-allowed' : ''}" onclick="prevLesson()" ${currentSection === 0 && currentLesson === 0 ? 'disabled' : ''}>← Anterior</button>
       ${completeBtn}
-      <button class="btn btn-primary" onclick="nextLesson()" ${currentSection === SECTIONS.length - 1 && isLastLesson ? 'disabled' : ''}>Siguiente →</button>
+      <button class="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-mono text-sm bg-accent text-white hover:bg-accent-dark transition-all font-semibold ${currentSection === SECTIONS.length - 1 && isLastLesson ? 'opacity-30 cursor-not-allowed' : ''}" onclick="nextLesson()" ${currentSection === SECTIONS.length - 1 && isLastLesson ? 'disabled' : ''}>Siguiente →</button>
     </div>
   `;
   content.scrollTop = 0;
@@ -1311,7 +1359,25 @@ function prevLesson() {
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('-translate-x-full');
 }
 
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.add('-translate-x-full');
+}
+
+// Mostrar menu toggle en mobile
+window.addEventListener('resize', () => {
+  const toggle = document.getElementById('menu-toggle');
+  if (window.innerWidth < 768) {
+    toggle.classList.remove('hidden');
+  } else {
+    toggle.classList.add('hidden');
+  }
+});
+
+// Inicializar
+initTheme();
 render();
