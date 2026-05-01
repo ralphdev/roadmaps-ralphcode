@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprende NestJS</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰ Menú</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="n-badge">N</div>
+      <div class="sidebar-title">Aprende NestJS</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>Progreso</span>
+        <span id="prog-label">0 / 20</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav" id="nav"></nav>
+</aside>
+
+<main class="content" id="content"></main>
+
+<script src="script.js"></script>
+</body>
+</html>
