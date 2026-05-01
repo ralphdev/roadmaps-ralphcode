@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NestJS Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">N</div>
+    <h1><span>Nest</span>JS Roadmap</h1>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Progreso</span>
+      <span id="pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="fill" style="width:0%"></div>
+    </div>
+  </div>
+</header>
+
+<main id="roadmap"></main>
+
+<button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
+
+<script src="script.js"></script>
+</body>
+</html>
