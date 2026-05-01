@@ -93,7 +93,7 @@ function codeBlock(obj, id) {
     <div class="bg-gray-900 dark:bg-black rounded-xl my-5 overflow-hidden border border-gray-800">
       <div class="flex items-center justify-between px-4 py-2.5 border-b border-gray-800">
         <span class="font-mono text-xs text-gray-400 uppercase tracking-wider">${obj.lang}${obj.label ? ' — ' + obj.label : ''}</span>
-        <button class="font-mono text-xs text-gray-400 hover:text-white bg-transparent border border-gray-700 hover:border-gray-500 cursor-pointer px-2 py-0.5 rounded transition-all" onclick="copyCode('code-${id}')">copiar</button>
+        <button class="flex items-center gap-1.5 font-mono text-xs text-gray-400 hover:text-white bg-transparent border border-gray-700 hover:border-gray-500 cursor-pointer px-2 py-1 rounded transition-all" onclick="copyCode('code-${id}')"><i class="fa-regular fa-copy"></i> copiar</button>
       </div>
       <pre id="code-${id}" class="px-5 py-5 overflow-x-auto font-mono text-sm leading-relaxed text-gray-100">${obj.content}</pre>
     </div>`;
@@ -103,9 +103,13 @@ function copyCode(id) {
   const el = document.getElementById(id);
   navigator.clipboard.writeText(el.innerText).then(() => {
     const btn = el.previousElementSibling.querySelector('button');
-    const original = btn.textContent;
-    btn.textContent = '✓ copiado';
-    setTimeout(() => btn.textContent = original, 1500);
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> copiado';
+    btn.classList.add('text-green-400', 'border-green-700');
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('text-green-400', 'border-green-700');
+    }, 1500);
   });
 }
 
