@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Guía completa para aprender NestJS, el framework de Node.js para construir aplicaciones escalables y mantenibles.">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <title>Aprende NestJS</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="nestjs-icon.svg" type="image/x-icon">
+  <link rel="stylesheet" href="https://unpkg.com/@material-tailwind/html@latest/styles/material-tailwind.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="style.css">
@@ -14,7 +17,7 @@
       theme: {
         extend: {
           fontFamily: {
-            serif: ['Fraunces', 'serif'],
+            serif: ['Roboto', 'serif'],
             mono: ['IBM Plex Mono', 'monospace'],
           },
           colors: {
@@ -26,39 +29,43 @@
       }
     }
   </script>
-  <link rel="icon" type="image/x-icon" href="nestjs-icon.png">
-  <meta name="description" content="Guía completa para aprender NestJS, el framework de Node.js para construir aplicaciones escalables y mantenibles.">
 </head>
-<body class="bg-amber-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-serif transition-colors duration-300">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-serif transition-colors duration-300">
 
-<button id="menu-toggle" class="hidden fixed top-4 left-4 z-50 bg-accent text-white p-2 rounded-md font-mono text-sm md:hidden" onclick="toggleSidebar()">☰ Menú</button>
+<button id="menu-toggle" class="hidden fixed top-4 left-4 z-50 bg-accent text-white px-3 py-2 rounded-lg font-mono text-sm md:hidden hover:bg-accent-dark transition-colors" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i> Menú
+</button>
 
-<button id="theme-toggle" class="fixed top-4 right-4 z-50 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" onclick="toggleTheme()" title="Cambiar tema">
+<button id="theme-toggle" class="fixed top-4 right-4 z-50 p-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-yellow-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors shadow-md" onclick="toggleTheme()" title="Cambiar tema">
   <i id="sun-icon" class="fas fa-sun text-lg hidden"></i>
   <i id="moon-icon" class="fas fa-moon text-lg"></i>
 </button>
 
-<aside id="sidebar" class="fixed left-0 top-0 w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-300 dark:border-gray-700 overflow-y-auto flex flex-col md:relative md:flex transition-all duration-300 -translate-x-full md:translate-x-0">
-  <div class="p-6 border-b border-gray-300 dark:border-gray-700">
-    <div class="flex items-center gap-2.5 mb-4">
-      <div class="w-8 h-8 bg-accent text-white font-mono text-sm font-bold flex items-center justify-center rounded">N</div>
-      <div class="text-sm font-bold italic text-gray-900 dark:text-white">Aprende NestJS</div>
-    </div>
-    <div>
-      <div class="flex justify-between font-mono text-xs text-gray-600 dark:text-gray-400 mb-1.5">
-        <span>Progreso</span>
-        <span id="prog-label">0 / 20</span>
+<div class="flex h-screen">
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 overflow-y-auto md:relative transition-all duration-300 z-40 -translate-x-full md:translate-x-0 md:shadow-lg shadow-slate-900/5">
+    <div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-slate-200 dark:border-slate-700">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10  from-accent to-accent-dark text-white font-mono text-sm font-bold flex items-center justify-center rounded-lg">
+          <img src="nestjs-icon.svg" alt="nest-icon" class="w-6 h-6">
+        </div>
+        <h1 class="text-lg font-bold font-serif text-slate-900 dark:text-white">NestJS</h1>
       </div>
-      <div class="h-1 bg-gray-300 dark:bg-gray-700 rounded">
-        <div id="prog-fill" class="h-full bg-accent rounded transition-all duration-500" style="width:0%"></div>
+      <div class="space-y-2">
+        <div class="flex justify-between font-mono text-xs text-slate-600 dark:text-slate-400">
+          <span>Progreso</span>
+          <span id="prog-label">0 / 20</span>
+        </div>
+        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div id="prog-fill" class="h-full bg-gradient-to-r from-accent to-accent-dark rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <nav id="nav" class="flex-1 py-3 overflow-y-auto"></nav>
-</aside>
+    <nav id="nav" class="flex-1 py-4 px-3 overflow-y-auto"></nav>
+  </aside>
 
-<main id="content" class="md:ml-64 px-8 md:px-16 py-12 md:py-12 max-w-4xl overflow-y-auto h-screen"></main>
+  <main id="content" class="flex-1 ml-0 md:ml-0 overflow-y-auto pt-16 md:pt-8 px-6 md:px-12 pb-8 max-w-5xl mx-auto w-full"></main>
+</div>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
